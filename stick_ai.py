@@ -10,9 +10,9 @@ def clear():
 def intro():
     clear()
     ai_brain = {}
+    ai_knowledge = []
     for i in range(1, 20):
         ai_brain[i] = [1, 2, 3]
-    ai_knowledge = []
     print("Welcome to the stick game.")
     print("Options:")
     print("\tPlay against a friend (1)")
@@ -56,6 +56,11 @@ def choice_error(choice):
         return True
 
 
+def add_knowledge(turns, count, ai_brain, learned_list):
+    if turns % 2 == 1 and count == 1:
+        return ai_brain[learned_list[0]].append(learned_list[1])
+
+
 def player_v_ai(ai_knowledge, ai_brain):
     clear()
     print("PLAYER VS. CPU")
@@ -76,10 +81,12 @@ def player_v_ai(ai_knowledge, ai_brain):
             for key in ai_brain:
                 if count == int(key):
                     choice = random.choice(ai_brain[key])
+                    if count - choice <= 0:
+                        choice == 1
                     print('AI chose {}'.format(choice))
-                    ai_knowledge = ai_brain[count]
-                    ai_knowledge.append(choice)
-                    ai_brain[count] = ai_knowledge
+                    ai_knowledge = (count, choice)
+                    learned_list = []
+                    learned_list.append((count, choice))
                     count -= choice
                     turns += 1
 
@@ -87,11 +94,13 @@ def player_v_ai(ai_knowledge, ai_brain):
 
         if turns % 2 == 1:
             if count == 1:
-                print("\nThere is 1 stick left on the board.")
+                print("\nThere is 1 stick left on the board. Player loses.")
+                add_knowledge(turns, count, ai_brain, ai_knowledge)
                 play_again_ai(ai_knowledge, ai_brain)
+                print(ai_brain)
 
             if count < 1:
-                print("That's it! Good luck next time, LOSER!")
+                print("CPU loses.")
                 play_again_ai(ai_knowledge, ai_brain)
 
         elif turns % 2 == 0:
@@ -99,11 +108,12 @@ def player_v_ai(ai_knowledge, ai_brain):
             for i in range(1, 20):
                 ai_brain[i] = [1, 2, 3]
             if count == 1:
-                print("\nThere is 1 stick left on the board.")
+                print("\nThere is 1 stick left on the board. CPU loses.")
                 play_again_ai(ai_knowledge, ai_brain)
 
             if count < 1:
                 print("That's it! Good luck next time, LOSER!")
+                add_knowledge(turns, count, ai_brain, ai_knowledge)
                 play_again_ai(ai_knowledge, ai_brain)
 
 
